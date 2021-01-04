@@ -6,7 +6,7 @@ class Reader:
         self.file_path = file_path
 
     def read_csv(self) -> pd.DataFrame:
-        return pd.read_csv(self.file_path, header=["ip_address"])
+        return pd.read_csv(self.file_path, header=0)
 
     def read_txt(self) -> pd.DataFrame:
-        return pd.read_csv(self.file_path, sep=",", header=["ip_address"])
+        return pd.read_csv(self.file_path, sep=",", header=0)
