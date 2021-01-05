@@ -23,7 +23,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     ip_addresses: pd.DataFrame = reader.read_csv()
 
     for index in range(len(ip_addresses)):
-        print(virustotal_main(ip_addresses.loc[index, "ip_address"]))
+        virustotal_score: int = virustotal_main(ip_addresses.loc[index, "ip_address"])
 
     return ip_addresses
 
