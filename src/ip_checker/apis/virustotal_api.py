@@ -10,6 +10,11 @@ from typing import Union, Dict, List
 
 '''
 
+'''
+detected_urls: URLs at this IP address that have at least 1 detection on a URL scan
+detected_downloaded_samples: Files that have been downloaded from this IP address with at least one AV detection
+
+'''
 
 def get_score(ip_scores: List[int]) -> int:
     average_threat_score: int = 0
