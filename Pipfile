@@ -9,6 +9,10 @@ verify_ssl = true
 numpy="*"
 pandas="*"
 requests="*"
+pytest="*"
+pip = "*"
+install = "*"
+certifi = "*"
 
 [requires]
 python_version = "3.8"
