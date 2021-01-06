@@ -27,11 +27,11 @@ def threat_crowd_main(ip_address: str) -> Union[str, int]:
         response: str = raw_response.text
 
     except requests.exceptions.HTTPError as e:
-        return f"Threat Crowd HTTP connectionne exceptionn: {e}"
+        return f"Threat Crowd HTTP connection exception: {e}"
     except requests.exceptions.ConnectionError as e:
-        return f"Threat Crowd Connection EXCEPTION: {e}"
+        return f"Threat Crowd connection exception: {e}"
     except requests.exceptions.RequestException as e:
-        return f"Threat Crowd EXCEPTION : {e}"
+        return f"Threat Crowd exception : {e}"
 
     risk_score: int = 0
 
