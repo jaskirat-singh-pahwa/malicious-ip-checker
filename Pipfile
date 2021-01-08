@@ -13,6 +13,7 @@ pytest="*"
 pip = "*"
 install = "*"
 certifi = "*"
+OTXv2 = "*"
 
 [requires]
 python_version = "3.8"

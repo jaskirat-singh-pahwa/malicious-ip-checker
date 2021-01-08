@@ -20,6 +20,7 @@ GitHub Link: https://github.com/balgan/ratemyip-openframework/blob/master/ip-sco
 API Link: https://rapidapi.com/binaryedge/api/securityratings?endpoint=5a9d4824e4b04378c0c99abc
 It gives score between 0 to 100,
 The higher the score, the higher the vulnerability / exposure level
+
 '''
 
 

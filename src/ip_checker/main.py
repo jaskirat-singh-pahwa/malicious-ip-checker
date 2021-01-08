@@ -8,6 +8,8 @@ from src.ip_checker.writer import Writer
 from src.ip_checker.apis.virustotal_api import virustotal_main
 from src.ip_checker.apis.threat_crowd_api import threat_crowd_main
 from src.ip_checker.apis.security_rating_api import security_rating_main
+from src.ip_checker.apis.abuse_ip_api import abuse_main
+from src.ip_checker.apis.alien_vault_api import alien_vault_main
 
 
 def main(argv: List) -> None:
@@ -26,6 +28,8 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     virustotal: List[Union[str, int]] = []
     threat_crowd: List[Union[str, int]] = []
     security_rating: List[Union[str, int]] = []
+    abuse_ip: List[Union[str, int]] = []
+    alien_vault: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -34,16 +38,22 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         virustotal_score: Union[int, str] = virustotal_main(ip_addresses.loc[index, "ip_address"])
         threat_crowd_score: Union[int, str] = threat_crowd_main(ip_addresses.loc[index, "ip_address"])
         security_rating_score = security_rating_main(ip_addresses.loc[index, "ip_address"])
+        abuse_ip_score = abuse_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
+        alien_vault_score = alien_vault_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
         threat_crowd.append(threat_crowd_score)
         security_rating.append(security_rating_score)
+        abuse_ip.append(abuse_ip_score)
+        alien_vault.append(alien_vault_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
     output["Threat_Crowd"] = threat_crowd
     output["Security_Rating"] = security_rating
+    output["Abuse_Ip"] = abuse_ip
+    output["Alien_Vault"] = alien_vault
 
     return pd.DataFrame(output)
 
