@@ -1,6 +1,4 @@
 import requests
-import IndicatorTypes
-from OTXv2 import OTXv2
 import json
 from typing import Union, Dict, List
 
