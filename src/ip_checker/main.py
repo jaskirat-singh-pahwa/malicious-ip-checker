@@ -11,6 +11,7 @@ from src.ip_checker.apis.security_rating_api import security_rating_main
 from src.ip_checker.apis.abuse_ip_api import abuse_main
 from src.ip_checker.apis.alien_vault_api import alien_vault_main
 from src.ip_checker.apis.dshield_api import dshield_main
+from src.ip_checker.apis.anti_deo_api import anti_deo_main
 
 
 def main(argv: List) -> None:
@@ -32,6 +33,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     abuse_ip: List[Union[str, int]] = []
     alien_vault: List[Union[str, int]] = []
     dshield: List[Union[str, int]] = []
+    anti_deo: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -43,6 +45,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         abuse_ip_score = abuse_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
         alien_vault_score = alien_vault_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
         dshield_score = dshield_main(ip_addresses.loc[index, "ip_address"])
+        anti_deo_score = anti_deo_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
@@ -51,6 +54,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         abuse_ip.append(abuse_ip_score)
         alien_vault.append(alien_vault_score)
         dshield.append(dshield_score)
+        anti_deo.append(anti_deo_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -59,6 +63,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Abuse_Ip"] = abuse_ip
     output["Alien_Vault"] = alien_vault
     output["DShield"] = dshield
+    output["Anti_Deo"] = anti_deo
 
     return pd.DataFrame(output)
 

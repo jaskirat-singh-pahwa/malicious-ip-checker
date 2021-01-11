@@ -16,6 +16,9 @@ from src.ip_checker.helper import (get_raw_response,
 API Link: https://www.dshield.org/api/#ipdetails
 Documentation: https://www.dshield.org/api/#ipdetails
 
+There are 2 parameters which we should consider, 
+One is Threat feeds and one is maxrisk.
+
 '''
 
 
