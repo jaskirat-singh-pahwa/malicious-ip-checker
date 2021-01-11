@@ -1,7 +1,7 @@
 import requests
-import json
-from typing import Union
-
+from typing import Union, Dict
+from src.ip_checker.helper import (get_raw_response,
+                                   get_processed_response)
 
 '''
  * Author: JASKIRAT
@@ -22,21 +22,17 @@ If the value of votes is:
 
 
 def threat_crowd_main(ip_address: str) -> Union[str, int]:
-    try:
-        raw_response = requests.get("http://www.threatcrowd.org/searchApi/v2/ip/report/", params={"ip": ip_address})
-        response: str = raw_response.text
-
-    except requests.exceptions.HTTPError as e:
-        return f"Threat Crowd HTTP connection exception: {e}"
-    except requests.exceptions.ConnectionError as e:
-        return f"Threat Crowd connection exception: {e}"
-    except requests.exceptions.RequestException as e:
-        return f"Threat Crowd exception : {e}"
-
+    url: str = "http://www.threatcrowd.org/searchApi/v2/ip/report/"
+    params: Dict[str, str] = {"ip": ip_address}
+    raw_response: requests.Response = get_raw_response(url=url,
+                                                       headers=None,
+                                                       params=params,
+                                                       ip_address=ip_address,
+                                                       api_name="Threat Crowd")
     risk_score: int = 0
 
     if raw_response.status_code == 200:
-        json_response = json.loads(response)
+        json_response = get_processed_response(raw_response=raw_response)
 
         if "votes" in json_response:
             if json_response["votes"] == -1:
@@ -51,6 +47,8 @@ def threat_crowd_main(ip_address: str) -> Union[str, int]:
     elif raw_response.status_code == 429:
         return "Free trial is over"
 
-    else:
-        return "Some unnknown exception"
+    elif raw_response.status_code == 504:
+        return "No information about this IP"
 
+    else:
+        return "Some unknown exception"

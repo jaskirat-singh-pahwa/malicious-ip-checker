@@ -1,7 +1,7 @@
 import requests
-import json
-from typing import Union
-
+from typing import Union, Dict
+from src.ip_checker.helper import (get_raw_response,
+                                   get_processed_response)
 
 '''
  * Author: JASKIRAT
@@ -25,30 +25,28 @@ The higher the score, the higher the vulnerability / exposure level
 
 
 def security_rating_main(ip_address: str) -> Union[str, int]:
-    try:
-        url = "https://binaryedge-securityratings-v1.p.rapidapi.com/score/ip"
-        querystring = {"target": ip_address}
-        headers = {
-            'x-rapidapi-key': "fa8a97daacmshd6ed3316ed17476p1957b4jsn6bd3c56557db",
-            'x-rapidapi-host': "binaryedge-securityratings-v1.p.rapidapi.com"
-        }
+    url: str = "https://binaryedge-securityratings-v1.p.rapidapi.com/score/ip"
+    params: Dict[str, str] = {"target": ip_address}
+    headers: Dict[str, str] = {
+        'x-rapidapi-key': "fa8a97daacmshd6ed3316ed17476p1957b4jsn6bd3c56557db",
+        'x-rapidapi-host': "binaryedge-securityratings-v1.p.rapidapi.com"
+    }
+    raw_response: Union[requests.Response, str] = get_raw_response(url=url,
+                                                                   headers=headers,
+                                                                   params=params,
+                                                                   ip_address=ip_address,
+                                                                   api_name="Security Rating")
 
-        raw_response = requests.request("GET", url, headers=headers, params=querystring)
+    if raw_response.status_code == 200:
+        json_response = get_processed_response(raw_response=raw_response)
 
-    except requests.exceptions.HTTPError as e:
-        return f"Security Rating HTTP exceptionn: {e}"
-    except requests.exceptions.ConnectionError as e:
-        return f"Security Rating connection exception: {e}"
-    except requests.exceptions.RequestException as e:
-        return f"Security Rating exception : {e}"
+        if "normalized_ip_score" in json_response:
+            return round(json_response["normalized_ip_score"] / 10)
+        else:
+            return json_response["message"]
 
-    respose = raw_response.text
-    json_response = json.loads(respose)
-
-    if "normalized_ip_score" in json_response:
-        return round(json_response["normalized_ip_score"] / 10)
     else:
-        return json_response["message"]
+        return "Some unknown exception"
 
 
 '''

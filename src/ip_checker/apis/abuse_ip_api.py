@@ -1,5 +1,7 @@
 import requests
 from typing import Union, Dict, List
+from src.ip_checker.helper import (get_raw_response,
+                                   get_processed_response)
 
 '''
  * Author: JASKIRAT
@@ -52,24 +54,19 @@ def abuse_main(ip_address: str) -> Union[Dict[str, Union[int, str, List[str]]], 
 
     marked_categories: Dict[int, str] = get_attack_categories()
 
-    try:
-        url: str = "https://api.abuseipdb.com/api/v2/check"
-        params = {'ipAddress': ip_address,
-                  'key': '124edb2bed9ea9c6500f6d66945cefda615036d8cf757a4e0a55ffe27caf09a5a702be4e578dbe7f',
-                  'verbose': True,
-                  'maxAgeInDays': 365}
-        
-        raw_response = requests.get(url, params=params)
+    url: str = "https://api.abuseipdb.com/api/v2/check"
+    params = {'ipAddress': ip_address,
+              'key': '124edb2bed9ea9c6500f6d66945cefda615036d8cf757a4e0a55ffe27caf09a5a702be4e578dbe7f',
+              'verbose': True,
+              'maxAgeInDays': 365}
 
-    except requests.exceptions.HTTPError as e:
-        return f"Abuse IP HTTP connection exception: {e}"
-    except requests.exceptions.ConnectionError as e:
-        return f"Abuse IP connection exception: {e}"
-    except requests.exceptions.RequestException as e:
-        return f"Abuse IP exception : {e}"
+    raw_response: Union[requests.Response, str] = get_raw_response(url=url,
+                                                                   headers=None,
+                                                                   params=params,
+                                                                   ip_address=ip_address,
+                                                                   api_name="Abuse IP")
 
-    json_response = raw_response.json()
-
+    json_response = get_processed_response(raw_response=raw_response)
     if raw_response.status_code == 200:
         category: str = ""
 
@@ -89,18 +86,18 @@ def abuse_main(ip_address: str) -> Union[Dict[str, Union[int, str, List[str]]], 
                     flat_list = set(flat_list)
 
                     for i in flat_list:
-                        category = category + marked_categories[i] + " , "
+                        category = category + marked_categories[int(i)] + " , "
                     category = category.strip(" , ")
 
-                return {"IpAddress": str(ip_address), "RiskScore": risk_score,  "Category": category}
+                return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
 
             else:
-                return {"IpAddress": str(ip_address), "RiskScore": risk_score,  "Category": category}
+                return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
 
         else:
             risk_score = 0
             category = ""
-            return {"IpAddress": str(ip_address), "RiskScore": risk_score,  "Category": category}
+            return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
 
     elif json_response[0]["status"] == str(429):
         return "You have exceeded daily limit"
