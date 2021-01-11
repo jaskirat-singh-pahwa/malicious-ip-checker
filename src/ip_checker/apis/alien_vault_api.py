@@ -1,5 +1,4 @@
 import requests
-import json
 from typing import Union, Dict, List
 from src.ip_checker.helper import (get_raw_response,
                                    get_processed_response)

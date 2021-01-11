@@ -31,7 +31,7 @@ def get_score(ip_scores: List[int]) -> int:
     return average_threat_score
 
 
-def virustotal_main(ip_address: str) -> Union[str, int]:
+def virustotal_main(ip_address: str) -> Union[int, str]:
     url: str = "https://www.virustotal.com/vtapi/v2/ip-address/report"
     params: Dict[str, str] = {
         "apikey": "4c87da16e6533d85a56f2f2fafd14661318abf778b158fe591c689eb1050b33f",
