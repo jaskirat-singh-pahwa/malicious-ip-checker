@@ -1,6 +1,7 @@
 import requests
 from typing import Union, Dict, List
-
+from src.ip_checker.helper import (get_raw_response,
+                                   get_processed_response)
 
 '''
  * Author: JASKIRAT
@@ -31,29 +32,32 @@ def get_score(ip_scores: List[int]) -> int:
 
 
 def virustotal_main(ip_address: str) -> Union[str, int]:
-    try:
-        url: str = "https://www.virustotal.com/vtapi/v2/ip-address/report"
-        params: Dict[str, str] = {"apikey": "4c87da16e6533d85a56f2f2fafd14661318abf778b158fe591c689eb1050b33f", "ip": ip_address}
-        response = requests.get(url, params=params)
+    url: str = "https://www.virustotal.com/vtapi/v2/ip-address/report"
+    params: Dict[str, str] = {
+        "apikey": "4c87da16e6533d85a56f2f2fafd14661318abf778b158fe591c689eb1050b33f",
+        "ip": ip_address
+    }
+    raw_response: Union[requests.Response, str] = get_raw_response(url=url,
+                                                                   headers=None,
+                                                                   params=params,
+                                                                   ip_address=ip_address,
+                                                                   api_name="Virus Total")
 
-    except requests.exceptions.HTTPError as e:
-        return f"VirusTotal HTTP connection exception: {e}"
-    except requests.exceptions.ConnectionError as e:
-        return f"VirusTotal connection exception: {e}"
-    except requests.exceptions.RequestException as e:
-        return f"VirusTotal exception: {e}"
+    if raw_response.status_code == 200:
+        json_response = get_processed_response(raw_response=raw_response)
+        ip_scores: List[int] = []
 
-    json_response = response.json()
-    ip_scores: List[int] = []
+        if "detected_downloaded_samples" in json_response:
+            for i in range(len(json_response["detected_downloaded_samples"])):
+                ip_scores.append(json_response["detected_downloaded_samples"][i]["positives"])
 
-    if "detected_downloaded_samples" in json_response:
-        for i in range(len(json_response["detected_downloaded_samples"])):
-            ip_scores.append(json_response["detected_downloaded_samples"][i]["positives"])
+        if "detected_urls" in json_response:
+            for i in range(len(json_response["detected_urls"])):
+                ip_scores.append(json_response["detected_urls"][i]["positives"])
 
-    if "detected_urls" in json_response:
-        for i in range(len(json_response["detected_urls"])):
-            ip_scores.append(json_response["detected_urls"][i]["positives"])
+        ip_threat_score: int = get_score(ip_scores)
 
-    ip_threat_score: int = get_score(ip_scores)
+        return ip_threat_score
 
-    return ip_threat_score
+    else:
+        return "Some unknown exception"
