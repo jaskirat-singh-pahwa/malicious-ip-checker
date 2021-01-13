@@ -35,7 +35,7 @@ def api_void_main(ip_address: str) -> Union[int, str, Dict[str, Union[int, str]]
     if raw_response.status_code == 200:
         json_response = get_processed_response(raw_response=raw_response)
 
-        if ~("error" in json_response):
+        if not ("error" in json_response):
             category = ""
             if json_response["data"]["report"]["blacklists"]["detections"] > 35:
                 risk_score = 8
@@ -66,7 +66,11 @@ def api_void_main(ip_address: str) -> Union[int, str, Dict[str, Union[int, str]]
             return {"IpAddress": ip_address, "RiskScore": risk_score, "Category": category}
 
         else:
-            return "API key is not valid or free trial is over"
+            return json_response["error"]
 
     else:
         return "The status code is not 200"
+
+
+if __name__ == "__main__":
+    print(api_void_main("192.268.10.1"))

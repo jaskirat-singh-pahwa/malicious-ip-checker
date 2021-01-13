@@ -9,11 +9,12 @@ def get_raw_response(
         headers: Union[Dict[str, str], None],
         params: Union[Dict[str, str], None],
         ip_address: str,
-        api_name: str
+        api_name: str,
+        auth=None,
         ) -> Union[requests.Response, str]:
 
     try:
-        return requests.request(method="GET", url=url, headers=headers, params=params)
+        return requests.request(method="GET", url=url, headers=headers, params=params, auth=auth)
 
     except requests.exceptions.HTTPError as e:
         return f"{api_name} HTTP connection exception for {ip_address} ip address: {e}"

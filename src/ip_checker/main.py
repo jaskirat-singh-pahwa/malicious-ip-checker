@@ -13,6 +13,7 @@ from src.ip_checker.apis.alien_vault_api import alien_vault_main
 from src.ip_checker.apis.dshield_api import dshield_main
 from src.ip_checker.apis.anti_deo_api import anti_deo_main
 from src.ip_checker.apis.api_void import api_void_main
+from src.ip_checker.apis.ibm_xforce_api import ibm_xforce_main
 
 
 def main(argv: List) -> None:
@@ -36,6 +37,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     dshield: List[Union[str, int]] = []
     anti_deo: List[Union[str, int]] = []
     api_void: List[Union[str, int]] = []
+    ibm_xforce: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -48,7 +50,13 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         alien_vault_score = alien_vault_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
         dshield_score = dshield_main(ip_addresses.loc[index, "ip_address"])
         anti_deo_score = anti_deo_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
-        api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
+
+        if "RiskScore" in api_void_main(ip_addresses.loc[index, "ip_address"]):
+            api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
+        else:
+            api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])
+
+        ibm_xforce_score = ibm_xforce_main(ip_addresses.loc[index, "ip_address"])
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
@@ -59,6 +67,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         dshield.append(dshield_score)
         anti_deo.append(anti_deo_score)
         api_void.append(api_void_score)
+        ibm_xforce.append(ibm_xforce_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -69,6 +78,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["DShield"] = dshield
     output["Anti_Deo"] = anti_deo
     output["Api_Void"] = api_void
+    output["Ibm_Xforce"] = ibm_xforce
 
     return pd.DataFrame(output)
 
