@@ -24,7 +24,7 @@ The higher the score, the higher the vulnerability / exposure level
 '''
 
 
-def security_rating_main(ip_address: str) -> Union[str, int]:
+def security_rating_main(ip_address: str) -> Union[int, str]:
     url: str = "https://binaryedge-securityratings-v1.p.rapidapi.com/score/ip"
     params: Dict[str, str] = {"target": ip_address}
     headers: Dict[str, str] = {

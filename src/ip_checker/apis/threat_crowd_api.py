@@ -21,7 +21,7 @@ If the value of votes is:
 '''
 
 
-def threat_crowd_main(ip_address: str) -> Union[str, int]:
+def threat_crowd_main(ip_address: str) -> Union[int, str]:
     url: str = "http://www.threatcrowd.org/searchApi/v2/ip/report/"
     params: Dict[str, str] = {"ip": ip_address}
     raw_response: requests.Response = get_raw_response(url=url,
