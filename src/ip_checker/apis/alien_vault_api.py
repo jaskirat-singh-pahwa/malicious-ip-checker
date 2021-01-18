@@ -26,7 +26,7 @@ def alien_vault_main(ip_address: str) -> Union[Dict[str, Union[str, int, List[st
 
     url = "https://otx.alienvault.com/api/v1/indicators/IPv4/" + ip_address + "/reputation"
     headers: Dict[str, str] = {
-        'x-otx-api-key': "edc898b247fc1ad5f03f193106b38e02bd66b7d62d3b73e22fa9d2ebbcbf7dcb"
+        "x-otx-api-key": "edc898b247fc1ad5f03f193106b38e02bd66b7d62d3b73e22fa9d2ebbcbf7dcb"
     }
     raw_response: Union[requests.Response, str] = get_raw_response(url=url,
                                                                    headers=headers,

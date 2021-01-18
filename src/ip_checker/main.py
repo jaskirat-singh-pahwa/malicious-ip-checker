@@ -14,6 +14,7 @@ from src.ip_checker.apis.dshield_api import dshield_main
 from src.ip_checker.apis.anti_deo_api import anti_deo_main
 from src.ip_checker.apis.api_void import api_void_main
 from src.ip_checker.apis.ibm_xforce_api import ibm_xforce_main
+from src.ip_checker.apis.monapi_api import monapi_main
 
 
 def main(argv: List) -> None:
@@ -38,6 +39,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     anti_deo: List[Union[str, int]] = []
     api_void: List[Union[str, int]] = []
     ibm_xforce: List[Union[str, int]] = []
+    monapi: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -57,6 +59,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
             api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])
 
         ibm_xforce_score = ibm_xforce_main(ip_addresses.loc[index, "ip_address"])
+        monapi_score = monapi_main(ip_addresses.loc[index, "ip_address"])
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
@@ -68,6 +71,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         anti_deo.append(anti_deo_score)
         api_void.append(api_void_score)
         ibm_xforce.append(ibm_xforce_score)
+        monapi.append(monapi_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -79,6 +83,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Anti_Deo"] = anti_deo
     output["Api_Void"] = api_void
     output["Ibm_Xforce"] = ibm_xforce
+    output["Monapi"] = monapi
 
     return pd.DataFrame(output)
 
