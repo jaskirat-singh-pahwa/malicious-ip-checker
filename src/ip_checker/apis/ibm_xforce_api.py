@@ -37,7 +37,7 @@ def ibm_xforce_main(ip_address: str) -> Union[int, str]:
                                                                    headers=headers,
                                                                    params=None,
                                                                    ip_address=ip_address,
-                                                                   api_name="Abuse IP")
+                                                                   api_name="IBM Xforce")
 
     if raw_response.status_code == 200:
         ip_scores: List[int] = []

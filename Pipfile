@@ -16,6 +16,5 @@ certifi = "*"
 OTXv2 = "*"
 xmltodict = "*"
 
-
 [requires]
 python_version = "3.8"
