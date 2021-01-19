@@ -20,7 +20,8 @@ You you will get a calculated threat score for that IP between 1 and 100.
 A higher score means more potential threat.
 
 Also there is one more field called threat_level which is either low, medium or high
-Here I will be using threat_level field
+Here I will be using threat_level field.
+
 '''
 
 
