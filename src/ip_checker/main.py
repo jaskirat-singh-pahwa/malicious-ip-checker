@@ -15,6 +15,9 @@ from src.ip_checker.apis.anti_deo_api import anti_deo_main
 from src.ip_checker.apis.api_void import api_void_main
 from src.ip_checker.apis.ibm_xforce_api import ibm_xforce_main
 from src.ip_checker.apis.monapi_api import monapi_main
+from src.ip_checker.apis.ip_reputation import ip_reputation_main
+from src.ip_checker.apis.neutrino_api import neutrino_main
+from src.ip_checker.apis.fraud_guard_api import fraud_guard_main
 
 
 def main(argv: List) -> None:
@@ -40,6 +43,9 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     api_void: List[Union[str, int]] = []
     ibm_xforce: List[Union[str, int]] = []
     monapi: List[Union[str, int]] = []
+    ip_reputation: List[Union[str, int]] = []
+    neutrino: List[Union[str, int]] = []
+    fraud_guard: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -60,6 +66,9 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
 
         ibm_xforce_score = ibm_xforce_main(ip_addresses.loc[index, "ip_address"])
         monapi_score = monapi_main(ip_addresses.loc[index, "ip_address"])
+        ip_reputation_score = ip_reputation_main(ip_addresses.loc[index, "ip_address"])
+        neutrino_score = neutrino_main(ip_addresses.loc[index, "ip_address"])
+        fraud_guard_score = fraud_guard_main(ip_addresses.loc[index, "ip_address"])
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
@@ -72,6 +81,9 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         api_void.append(api_void_score)
         ibm_xforce.append(ibm_xforce_score)
         monapi.append(monapi_score)
+        ip_reputation.append(ip_reputation_score)
+        neutrino.append(neutrino_score)
+        fraud_guard.append(fraud_guard_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -84,6 +96,9 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Api_Void"] = api_void
     output["Ibm_Xforce"] = ibm_xforce
     output["Monapi"] = monapi
+    output["IP_Reputation"] = ip_reputation
+    output["Neutrino"] = neutrino
+    output["Fraud Guard"] = fraud_guard
 
     return pd.DataFrame(output)
 

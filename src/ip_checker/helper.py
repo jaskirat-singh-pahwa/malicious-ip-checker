@@ -14,7 +14,7 @@ def get_raw_response(
         ) -> Union[requests.Response, str]:
 
     try:
-        return requests.request(method="GET", url=url, headers=headers, params=params, auth=auth)
+        return requests.request(method="GET", url=url, headers=headers, params=params, auth=auth, verify=True)
 
     except requests.exceptions.HTTPError as e:
         return f"{api_name} HTTP connection exception for {ip_address} ip address: {e}"
