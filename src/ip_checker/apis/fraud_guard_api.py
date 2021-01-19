@@ -15,7 +15,7 @@ from src.ip_checker.helper import (get_raw_response,
 
 '''
 API Link: https://app.fraudguard.io/
-Documentation: 
+Documentation: https://app.fraudguard.io/
 You need to register for your free trial
 
 There is a field called threat_level which is from 0 to 10
