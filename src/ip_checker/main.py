@@ -1,6 +1,7 @@
 from typing import List, Union, Dict
 import pandas as pd
 import sys
+from time import time
 
 from src.ip_checker.args import parse_args
 from src.ip_checker.reader import Reader
@@ -22,6 +23,7 @@ from src.ip_checker.apis.hetrix_tools_api import hetrix_tools_main
 
 
 def main(argv: List) -> None:
+    start = time.time()
     args = parse_args(argv)
     ip_addresses_file_path: str = args["ip_addresses"]
     output_file_path: str = args["output_path"]
@@ -29,6 +31,9 @@ def main(argv: List) -> None:
 
     writer: Writer = Writer(df=ip_address_with_scores, write_path=output_file_path)
     writer.write_to_csv()
+    end = time.time()
+
+    print(f"Total time taken by project: {end - start}")
 
 
 def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
