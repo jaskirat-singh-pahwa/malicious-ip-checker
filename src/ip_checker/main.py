@@ -1,6 +1,7 @@
 from typing import List, Union, Dict
 import pandas as pd
 import sys
+from time import time
 
 from src.ip_checker.args import parse_args
 from src.ip_checker.reader import Reader
@@ -18,9 +19,11 @@ from src.ip_checker.apis.monapi_api import monapi_main
 from src.ip_checker.apis.ip_reputation import ip_reputation_main
 from src.ip_checker.apis.neutrino_api import neutrino_main
 from src.ip_checker.apis.fraud_guard_api import fraud_guard_main
+from src.ip_checker.apis.hetrix_tools_api import hetrix_tools_main
 
 
 def main(argv: List) -> None:
+    start = time.time()
     args = parse_args(argv)
     ip_addresses_file_path: str = args["ip_addresses"]
     output_file_path: str = args["output_path"]
@@ -28,6 +31,9 @@ def main(argv: List) -> None:
 
     writer: Writer = Writer(df=ip_address_with_scores, write_path=output_file_path)
     writer.write_to_csv()
+    end = time.time()
+
+    print(f"Total time taken by project: {end - start}")
 
 
 def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
@@ -46,6 +52,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     ip_reputation: List[Union[str, int]] = []
     neutrino: List[Union[str, int]] = []
     fraud_guard: List[Union[str, int]] = []
+    hetrix_tools: List[Union[str, int]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
@@ -69,6 +76,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         ip_reputation_score = ip_reputation_main(ip_addresses.loc[index, "ip_address"])
         neutrino_score = neutrino_main(ip_addresses.loc[index, "ip_address"])
         fraud_guard_score = fraud_guard_main(ip_addresses.loc[index, "ip_address"])
+        hetrix_tools_score = hetrix_tools_main(ip_addresses.loc[index, "ip_address"])
 
         ips.append(ip_addresses.loc[index, "ip_address"])
         virustotal.append(virustotal_score)
@@ -84,6 +92,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         ip_reputation.append(ip_reputation_score)
         neutrino.append(neutrino_score)
         fraud_guard.append(fraud_guard_score)
+        hetrix_tools.append(hetrix_tools_score)
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -98,7 +107,8 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Monapi"] = monapi
     output["IP_Reputation"] = ip_reputation
     output["Neutrino"] = neutrino
-    output["Fraud Guard"] = fraud_guard
+    output["Fraud_Guard"] = fraud_guard
+    output["Hetrix_Tools"] = hetrix_tools
 
     return pd.DataFrame(output)
 
