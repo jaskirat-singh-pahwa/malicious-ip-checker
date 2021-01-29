@@ -89,15 +89,18 @@ def abuse_main(ip_address: str) -> Union[Dict[str, Union[int, str, List[str]]], 
                         category = category + marked_categories[int(i)] + " , "
                     category = category.strip(" , ")
 
-                return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
+                # return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
+                return risk_score
 
             else:
-                return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
+                return risk_score
+                # return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
 
         else:
             risk_score = 0
             category = ""
-            return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
+            # return {"IpAddress": str(ip_address), "RiskScore": risk_score, "Category": category}
+            return risk_score
 
     elif json_response[0]["status"] == str(429):
         return "You have exceeded daily limit"

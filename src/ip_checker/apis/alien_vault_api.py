@@ -54,10 +54,12 @@ def alien_vault_main(ip_address: str) -> Union[Dict[str, Union[str, int, List[st
 
             appended_category = appended_category.strip(" , ")
 
-            return {"Ip_Address": str(ip_address), "RiskScore": threat_score, "Category": appended_category}
+            # return {"Ip_Address": str(ip_address), "RiskScore": threat_score, "Category": appended_category}
+            return threat_score
 
         else:
-            return {"Ip_Address": str(ip_address), "RiskScore": threat_score, "Category": appended_category}
+            return threat_score
+            # return {"Ip_Address": str(ip_address), "RiskScore": threat_score, "Category": appended_category}
 
     elif raw_response.status_code == 404:
         return "No information about this IP"
