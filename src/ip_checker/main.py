@@ -1,7 +1,8 @@
 from typing import List, Union, Dict
 import pandas as pd
 import sys
-from time import time
+import time
+from threading import Thread
 
 from src.ip_checker.args import parse_args
 from src.ip_checker.reader import Reader
@@ -37,62 +38,140 @@ def main(argv: List) -> None:
 
 
 def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
+    threads = list()
+
     output: Dict[str, List[Union[str, int]]] = {}
     ips: List[str] = []
-    virustotal: List[Union[str, int]] = []
-    threat_crowd: List[Union[str, int]] = []
-    security_rating: List[Union[str, int]] = []
-    abuse_ip: List[Union[str, int]] = []
-    alien_vault: List[Union[str, int]] = []
-    dshield: List[Union[str, int]] = []
-    anti_deo: List[Union[str, int]] = []
-    api_void: List[Union[str, int]] = []
-    ibm_xforce: List[Union[str, int]] = []
-    monapi: List[Union[str, int]] = []
-    ip_reputation: List[Union[str, int]] = []
-    neutrino: List[Union[str, int]] = []
-    fraud_guard: List[Union[str, int]] = []
-    hetrix_tools: List[Union[str, int]] = []
+    virustotal: List[Union[int, str]] = []
+    threat_crowd: List[Union[int, str]] = []
+    security_rating: List[Union[int, str]] = []
+    abuse_ip: List[Union[int, str]] = []
+    alien_vault: List[Union[int, str]] = []
+    dshield: List[Union[int, str]] = []
+    anti_deo: List[Union[int, str]] = []
+    api_void: List[Union[int, str]] = []
+    ibm_xforce: List[Union[int, str]] = []
+    monapi: List[Union[int, str]] = []
+    ip_reputation: List[Union[int, str]] = []
+    neutrino: List[Union[int, str]] = []
+    fraud_guard: List[Union[int, str]] = []
+    hetrix_tools: List[Union[int, str]] = []
 
     reader: Reader = Reader(file_path=ip_addresses_file_path)
     ip_addresses: pd.DataFrame = reader.read_csv()
 
     for index in range(len(ip_addresses)):
-        virustotal_score: Union[int, str] = virustotal_main(ip_addresses.loc[index, "ip_address"])
-        threat_crowd_score: Union[int, str] = threat_crowd_main(ip_addresses.loc[index, "ip_address"])
-        security_rating_score = security_rating_main(ip_addresses.loc[index, "ip_address"])
-        abuse_ip_score = abuse_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
-        alien_vault_score = alien_vault_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
-        dshield_score = dshield_main(ip_addresses.loc[index, "ip_address"])
-        anti_deo_score = anti_deo_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
-
-        if "RiskScore" in api_void_main(ip_addresses.loc[index, "ip_address"]):
-            api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])["RiskScore"]
-        else:
-            api_void_score = api_void_main(ip_addresses.loc[index, "ip_address"])
-
-        ibm_xforce_score = ibm_xforce_main(ip_addresses.loc[index, "ip_address"])
-        monapi_score = monapi_main(ip_addresses.loc[index, "ip_address"])
-        ip_reputation_score = ip_reputation_main(ip_addresses.loc[index, "ip_address"])
-        neutrino_score = neutrino_main(ip_addresses.loc[index, "ip_address"])
-        fraud_guard_score = fraud_guard_main(ip_addresses.loc[index, "ip_address"])
-        hetrix_tools_score = hetrix_tools_main(ip_addresses.loc[index, "ip_address"])
 
         ips.append(ip_addresses.loc[index, "ip_address"])
-        virustotal.append(virustotal_score)
-        threat_crowd.append(threat_crowd_score)
-        security_rating.append(security_rating_score)
-        abuse_ip.append(abuse_ip_score)
-        alien_vault.append(alien_vault_score)
-        dshield.append(dshield_score)
-        anti_deo.append(anti_deo_score)
-        api_void.append(api_void_score)
-        ibm_xforce.append(ibm_xforce_score)
-        monapi.append(monapi_score)
-        ip_reputation.append(ip_reputation_score)
-        neutrino.append(neutrino_score)
-        fraud_guard.append(fraud_guard_score)
-        hetrix_tools.append(hetrix_tools_score)
+
+        virustotal_thread = Thread(
+            target=lambda lst, arg: lst.append(virustotal_main(arg)),
+            args=(virustotal, ip_addresses.loc[index, "ip_address"])
+        )
+        virustotal_thread.start()
+
+        threat_crowd_thread = Thread(
+            target=lambda lst, arg: lst.append(threat_crowd_main(arg)),
+            args=(threat_crowd, ip_addresses.loc[index, "ip_address"])
+        )
+        threat_crowd_thread.start()
+
+        security_rating_thread = Thread(
+            target=lambda lst, arg: lst.append(security_rating_main(arg)),
+            args=(security_rating, ip_addresses.loc[index, "ip_address"])
+        )
+        security_rating_thread.start()
+
+        abuse_ip_thread = Thread(
+            target=lambda lst, arg: lst.append(abuse_main(arg)["RiskScore"]),
+            args=(abuse_ip, ip_addresses.loc[index, "ip_address"])
+        )
+        abuse_ip_thread.start()
+
+        alien_vault_thread = Thread(
+            target=lambda lst, arg: lst.append(alien_vault_main(arg)["RiskScore"]),
+            args=(alien_vault, ip_addresses.loc[index, "ip_address"])
+        )
+        alien_vault_thread.start()
+
+        dshield_thread = Thread(
+            target=lambda lst, arg: lst.append(dshield_main(arg)),
+            args=(dshield, ip_addresses.loc[index, "ip_address"])
+        )
+        dshield_thread.start()
+
+        anti_deo_thread = Thread(
+            target=lambda lst, arg: lst.append(anti_deo_main(arg)["RiskScore"]),
+            args=(anti_deo, ip_addresses.loc[index, "ip_address"])
+        )
+        anti_deo_thread.start()
+
+        # if "RiskScore" in api_void_main(ip_addresses.loc[index, "ip_address"]):
+        #     api_void_thread = Thread(
+        #         target=lambda lst, arg: lst.append(api_void_main(arg)["RiskScore"]),
+        #         args=(api_void, ip_addresses.loc[index, "ip_address"])
+        #     )
+        #     api_void_thread.start()
+        # else:
+        #     api_void_thread = Thread(
+        #         target=lambda lst, arg: lst.append(api_void_main(arg)["RiskScore"]),
+        #         args=(api_void, ip_addresses.loc[index, "ip_address"])
+        #     )
+        #     api_void_thread.start()
+
+        ibm_xforce_thread = Thread(
+            target=lambda lst, arg: lst.append(ibm_xforce_main(arg)),
+            args=(ibm_xforce, ip_addresses.loc[index, "ip_address"])
+        )
+        ibm_xforce_thread.start()
+
+        monapi_thread = Thread(
+            target=lambda lst, arg: lst.append(monapi_main(arg)),
+            args=(monapi, ip_addresses.loc[index, "ip_address"])
+        )
+        monapi_thread.start()
+
+        ip_reputation_thread = Thread(
+            target=lambda lst, arg: lst.append(ip_reputation_main(arg)),
+            args=(ip_reputation, ip_addresses.loc[index, "ip_address"])
+        )
+        ip_reputation_thread.start()
+
+        neutrino_thread = Thread(
+            target=lambda lst, arg: lst.append(neutrino_main(arg)),
+            args=(neutrino, ip_addresses.loc[index, "ip_address"])
+        )
+        neutrino_thread.start()
+
+        fraud_guard_thread = Thread(
+            target=lambda lst, arg: lst.append(fraud_guard_main(arg)),
+            args=(fraud_guard, ip_addresses.loc[index, "ip_address"])
+        )
+        fraud_guard_thread.start()
+
+        hetrix_tools_thread = Thread(
+            target=lambda lst, arg: lst.append(hetrix_tools_main(arg)),
+            args=(hetrix_tools, ip_addresses.loc[index, "ip_address"])
+        )
+        hetrix_tools_thread.start()
+
+        threads.append(virustotal_thread)
+        threads.append(threat_crowd_thread)
+        threads.append(security_rating_thread)
+        threads.append(abuse_ip_thread)
+        threads.append(alien_vault_thread)
+        threads.append(dshield_thread)
+        threads.append(anti_deo_thread)
+        # threads.append(api_void_thread)
+        threads.append(ibm_xforce_thread)
+        threads.append(monapi_thread)
+        threads.append(ip_reputation_thread)
+        threads.append(neutrino_thread)
+        threads.append(fraud_guard_thread)
+        threads.append(hetrix_tools_thread)
+
+    for thread in threads:
+        thread.join()
 
     output["Ip_address"] = ips
     output["Virustotal"] = virustotal
@@ -102,7 +181,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Alien_Vault"] = alien_vault
     output["DShield"] = dshield
     output["Anti_Deo"] = anti_deo
-    output["Api_Void"] = api_void
+    # output["Api_Void"] = api_void
     output["Ibm_Xforce"] = ibm_xforce
     output["Monapi"] = monapi
     output["IP_Reputation"] = ip_reputation
