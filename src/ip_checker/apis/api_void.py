@@ -63,7 +63,7 @@ def api_void_main(ip_address: str) -> Union[int, str, Dict[str, Union[int, str]]
 
             category = category.strip(" , ")
 
-            return {"IpAddress": ip_address, "RiskScore": risk_score, "Category": category}
+            return risk_score
 
         else:
             return json_response["error"]

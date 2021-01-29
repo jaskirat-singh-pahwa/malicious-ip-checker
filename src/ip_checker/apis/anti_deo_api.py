@@ -59,7 +59,8 @@ def anti_deo_main(ip_address: str) -> Union[float, str, Dict[str, Union[int, str
         
         category = category.strip(" , ")
 
-        return {"IpAddress": ip_address, "RiskScore": round(risk_score), "Category": category}
+        # return {"IpAddress": ip_address, "RiskScore": round(risk_score), "Category": category}
+        return risk_score
 
     elif raw_response.status_code == 429:
         return "Free trial is over"

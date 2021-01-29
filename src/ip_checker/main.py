@@ -83,13 +83,13 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         security_rating_thread.start()
 
         abuse_ip_thread = Thread(
-            target=lambda lst, arg: lst.append(abuse_main(arg)["RiskScore"]),
+            target=lambda lst, arg: lst.append(abuse_main(arg)),
             args=(abuse_ip, ip_addresses.loc[index, "ip_address"])
         )
         abuse_ip_thread.start()
 
         alien_vault_thread = Thread(
-            target=lambda lst, arg: lst.append(alien_vault_main(arg)["RiskScore"]),
+            target=lambda lst, arg: lst.append(alien_vault_main(arg)),
             args=(alien_vault, ip_addresses.loc[index, "ip_address"])
         )
         alien_vault_thread.start()
@@ -101,23 +101,16 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         dshield_thread.start()
 
         anti_deo_thread = Thread(
-            target=lambda lst, arg: lst.append(anti_deo_main(arg)["RiskScore"]),
+            target=lambda lst, arg: lst.append(anti_deo_main(arg)),
             args=(anti_deo, ip_addresses.loc[index, "ip_address"])
         )
         anti_deo_thread.start()
 
-        # if "RiskScore" in api_void_main(ip_addresses.loc[index, "ip_address"]):
-        #     api_void_thread = Thread(
-        #         target=lambda lst, arg: lst.append(api_void_main(arg)["RiskScore"]),
-        #         args=(api_void, ip_addresses.loc[index, "ip_address"])
-        #     )
-        #     api_void_thread.start()
-        # else:
-        #     api_void_thread = Thread(
-        #         target=lambda lst, arg: lst.append(api_void_main(arg)["RiskScore"]),
-        #         args=(api_void, ip_addresses.loc[index, "ip_address"])
-        #     )
-        #     api_void_thread.start()
+        api_void_thread = Thread(
+            target=lambda lst, arg: lst.append(api_void_main(arg)),
+            args=(api_void, ip_addresses.loc[index, "ip_address"])
+        )
+        api_void_thread.start()
 
         ibm_xforce_thread = Thread(
             target=lambda lst, arg: lst.append(ibm_xforce_main(arg)),
@@ -162,7 +155,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
         threads.append(alien_vault_thread)
         threads.append(dshield_thread)
         threads.append(anti_deo_thread)
-        # threads.append(api_void_thread)
+        threads.append(api_void_thread)
         threads.append(ibm_xforce_thread)
         threads.append(monapi_thread)
         threads.append(ip_reputation_thread)
@@ -181,7 +174,7 @@ def run_main(ip_addresses_file_path: str) -> pd.DataFrame:
     output["Alien_Vault"] = alien_vault
     output["DShield"] = dshield
     output["Anti_Deo"] = anti_deo
-    # output["Api_Void"] = api_void
+    output["Api_Void"] = api_void
     output["Ibm_Xforce"] = ibm_xforce
     output["Monapi"] = monapi
     output["IP_Reputation"] = ip_reputation
